@@ -3,3 +3,6 @@
 
 # production
 /testZip
+
+#modules
+/node_modules
