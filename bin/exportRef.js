@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const PSD = require('psd')
 const fs = require('fs')
 const path = require('path')
@@ -5,12 +6,12 @@ const path = require('path')
 const arrPsd = []
 let time = Date.now() / 1000
 let arrRefs = {}
+const callDir = process.env.INIT_CWD
 
 
 const readDir = () => {
-  // console.log(process.env.INIT_CWD, ' это короче место')
   console.log("Gotta Catch 'Em All")
-  const arrDir = fs.readdirSync('./testPSD')
+  const arrDir = fs.readdirSync(callDir)
   arrDir.map(el => {
     const extName = path.extname(el)
     if (extName === '.psd') {
@@ -27,20 +28,20 @@ const readDir = () => {
 
 const writeRefToFile = (el, file) => {
   file = file.toString().replace('.psd', '')
-  const str = el.text.value.split(/\r/g)
-  str.map((el, i) => {
-    if (el === '') {
-      str.splice(i, 1)
+  const strRef = el.text.value.split(/\r/g)
+  strRef.map((el, i) => {
+    if (el === '' || el === ' ') {
+      strRef.splice(i, 1)
     }
   })
-  arrRefs[file] = str
+  arrRefs[file] = strRef
 }
 
 
 readDir()
 
 arrPsd.map((file) => {
-  const psd = PSD.fromFile(`./testPSD/${file}`)
+  const psd = PSD.fromFile(`${callDir}/${file}`)
   console.log(file)
   psd.parse()
   const child = psd.tree().export().children
@@ -64,6 +65,6 @@ arrPsd.map((file) => {
 })
 const json = JSON.stringify(arrRefs)
 
-fs.writeFileSync('./refs.json', json)
-time = Date.now() / 1000 - time;
-console.log('Время выполнения = ', time.toFixed(2));
+fs.writeFileSync(`${callDir}/refs.json`, json)
+time = Date.now() / 1000 - time
+console.log('Время выполнения = ', time.toFixed(2))
