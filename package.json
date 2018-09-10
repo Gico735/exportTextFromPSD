@@ -1,11 +1,11 @@
 {
-  "name": "exporttextfrompsd",
-  "version": "1.0.0",
+  "name": "exportref",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "preferGlobal": true,
   "bin": {
-    "exporttextfrompsd": "exportRef.js"
+    "exportref": "bin/exportRef.js"
   },
   "dependencies": {
     "psd": "^3.2.0"

@@ -6,9 +6,9 @@ const path = require('path')
 const arrPsd = []
 let time = Date.now() / 1000
 let arrRefs = {}
-const callDir = process.env.INIT_CWD
+const callDir = process.env.PWD
 
-
+console.log(callDir,' это короче место')
 const readDir = () => {
   console.log("Gotta Catch 'Em All")
   const arrDir = fs.readdirSync(callDir)
