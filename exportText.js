@@ -1,8 +1,29 @@
-const PSD = require('psd');
+const PSD = require('psd')
 const fs = require('fs')
 const path = require('path')
-let time = Date.now() / 1000;
 
+const arrPsd = []
+let time = Date.now() / 1000
+let arrRefs = {}
+
+
+const readDir = () => {
+  // console.log(process.env.INIT_CWD, ' это короче место')
+  console.log("Gotta Catch 'Em All")
+  const arrDir = fs.readdirSync('./testPSD')
+  arrDir.map(el => {
+    const extName = path.extname(el)
+    if (extName === '.psd') {
+      arrPsd.push(el)
+    }
+  })
+  if (arrPsd.length === 0) {
+    console.warn("\x1b[41m", "I don't see psd!")
+    console.log("")
+    process.exit(1)
+  }
+  return arrPsd
+}
 
 const writeRefToFile = (el, file) => {
   file = file.toString().replace('.psd', '')
@@ -12,24 +33,11 @@ const writeRefToFile = (el, file) => {
       str.splice(i, 1)
     }
   })
-  arr[file] = str
+  arrRefs[file] = str
 }
 
-const checkThisOut = () => {
-  // console.log(process.env.INIT_CWD, ' это короче место')
-  arrPsd.some(file => {
-    const extName = path.extname(file)
-    if (extName !== '.psd') {
-      console.warn("\x1b[41m", "I don't see psd!")
-      process.exit(1)
-    }
-  })
-}
 
-console.log("Gotta Catch 'Em All")
-const arrPsd = fs.readdirSync('./testPSD')
-// checkThisOut()
-let arr = {}
+readDir()
 
 arrPsd.map((file) => {
   const psd = PSD.fromFile(`./testPSD/${file}`)
@@ -42,6 +50,7 @@ arrPsd.map((file) => {
       arrChild.some(el => {
         if (el.name === 'ref') {
           writeRefToFile(el, file)
+          return true
         }
       })
       return true
@@ -53,8 +62,7 @@ arrPsd.map((file) => {
     }
   });
 })
-console.log(arr)
-const json = JSON.stringify(arr)
+const json = JSON.stringify(arrRefs)
 
 fs.writeFileSync('./refs.json', json)
 time = Date.now() / 1000 - time;
