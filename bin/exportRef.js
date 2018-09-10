@@ -8,7 +8,6 @@ let time = Date.now() / 1000
 let arrRefs = {}
 const callDir = process.env.PWD
 
-console.log(callDir,' это короче место')
 const readDir = () => {
   console.log("Gotta Catch 'Em All")
   const arrDir = fs.readdirSync(callDir)

@@ -1,7 +1,7 @@
 {
   "name": "exportref",
   "version": "1.0.3",
-  "description": "",
+  "description": "соберет все источники для тебя",
   "main": "index.js",
   "preferGlobal": true,
   "bin": {
