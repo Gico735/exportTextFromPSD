@@ -4,9 +4,11 @@ const fs = require('fs')
 const path = require('path')
 
 const arrPsd = []
+const callDir = process.env.PWD
 let time = Date.now() / 1000
 let arrRefs = {}
-const callDir = process.env.PWD
+
+
 
 const readDir = () => {
   console.log("Gotta Catch 'Em All")
@@ -23,6 +25,23 @@ const readDir = () => {
     process.exit(1)
   }
   return arrPsd
+}
+
+const chakeNameOfLay = (el, file) => {
+  if (el.type === 'group') {
+    const arrChild = el.children
+    arrChild.some(el => {
+      if (el.name === 'ref') {
+        writeRefToFile(el, file)
+        return flag = 1
+      }
+    })
+  } else {
+    if (el.name === 'ref') {
+      writeRefToFile(el, file)
+      return flag = 1
+    }
+  }
 }
 
 const writeRefToFile = (el, file) => {
@@ -43,24 +62,15 @@ arrPsd.map((file) => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
   console.log(file)
   psd.parse()
+  let flag = 0
   const child = psd.tree().export().children
   child.some(el => {
-    if (el.type === 'group') {
-      const arrChild = el.children
-      arrChild.some(el => {
-        if (el.name === 'ref') {
-          writeRefToFile(el, file)
-          return true
-        }
-      })
-      return true
-    } else {
-      if (el.name === 'ref') {
-        writeRefToFile(el, file)
-        return true
-      }
-    }
-  });
+    chakeNameOfLay(el, file)
+  })
+  if (!flag) {
+    console.warn("\x1b[0m", "I don't see REF lay!")
+    console.log("")
+  }
 })
 const json = JSON.stringify(arrRefs)
 
