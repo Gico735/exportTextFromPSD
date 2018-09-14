@@ -81,7 +81,7 @@ arrPsd.map((file) => {
     }
   })
   if (!flag) {
-    console.warn("\x1b[0m", "I don't see REF lay!")
+    console.warn("\x1b[0m", "I don't see REF layer!")
     console.log("")
   }
 })
