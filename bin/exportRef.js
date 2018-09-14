@@ -45,7 +45,7 @@ const chakeNameOfLay = (el, file) => {
 }
 
 const writeRefToFile = (el, file) => {
-  file = file.toString().replace('.psd', '')
+  file = file.replace('.psd', '')
   const strRef = el.text.value.split(/\r/g)
   strRef.map((el, i) => {
     if (el === '' || el === ' ') {
@@ -53,6 +53,7 @@ const writeRefToFile = (el, file) => {
     }
   })
   arrRefs[file] = strRef
+  return true;
 }
 
 
@@ -62,10 +63,22 @@ arrPsd.map((file) => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
   console.log(file)
   psd.parse()
-  let flag = 0
   const child = psd.tree().export().children
-  child.some(el => {
-    chakeNameOfLay(el, file)
+  let flag = child.some(el => {
+    if (el.type === 'group') {
+      const arrChild = el.children
+      return arrChild.some(el => {
+        if (el.name === 'ref') {
+          return writeRefToFile(el, file)
+
+        }
+      })
+
+    } else {
+      if (el.name === 'ref') {
+        return writeRefToFile(el, file)
+      }
+    }
   })
   if (!flag) {
     console.warn("\x1b[0m", "I don't see REF lay!")
