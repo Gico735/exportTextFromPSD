@@ -31,13 +31,13 @@ const chakeNameOfLay = (el, file) => {
   if (el.type === 'group') {
     const arrChild = el.children
     arrChild.some(el => {
-      if (el.name === 'ref') {
+      if (el.name === 'REF') {
         writeRefToFile(el, file)
         return flag = 1
       }
     })
   } else {
-    if (el.name === 'ref') {
+    if (el.name === 'REF') {
       writeRefToFile(el, file)
       return flag = 1
     }
@@ -68,14 +68,14 @@ arrPsd.map((file) => {
     if (el.type === 'group') {
       const arrChild = el.children
       return arrChild.some(el => {
-        if (el.name === 'ref') {
+        if (el.name === 'REF') {
           return writeRefToFile(el, file)
 
         }
       })
 
     } else {
-      if (el.name === 'ref') {
+      if (el.name === 'REF') {
         return writeRefToFile(el, file)
       }
     }
