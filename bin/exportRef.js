@@ -27,19 +27,36 @@ const readDir = () => {
   return arrPsd
 }
 
-const chakeNameOfLay = (el, file) => {
+// const checkNameOfLay = (el, file) => {
+//   if (el.type === 'group') {
+//     const arrChild = el.children
+//     arrChild.some(el => {
+//       if (el.name === 'REF') {
+//         writeRefToFile(el, file)
+//         return flag = 1
+//       }
+//     })
+//   } else {
+//     if (el.name === 'REF') {
+//       writeRefToFile(el, file)
+//       return flag = 1
+//     }
+//   }
+// }
+
+const checkLayersArr = (child, file) => {
+  return child.forEach(el => {
+    checkNameOfLayer(el, file)
+  })
+}
+
+const checkNameOfLayer = (el, file) => {
   if (el.type === 'group') {
-    const arrChild = el.children
-    arrChild.some(el => {
-      if (el.name === 'ref') {
-        writeRefToFile(el, file)
-        return flag = 1
-      }
-    })
+    const child = el.children
+    return checkLayersArr(child, file)
   } else {
-    if (el.name === 'ref') {
-      writeRefToFile(el, file)
-      return flag = 1
+    if (el.name === 'REF') {
+      return writeRefToFile(el, file)
     }
   }
 }
@@ -52,9 +69,10 @@ const writeRefToFile = (el, file) => {
       strRef.splice(i, 1)
     }
   })
-  arrRefs[file] = strRef
-  return true;
+  return arrRefs[file] = strRef
+  // return true
 }
+
 
 
 readDir()
@@ -64,24 +82,10 @@ arrPsd.map((file) => {
   console.log(file)
   psd.parse()
   const child = psd.tree().export().children
-  let flag = child.some(el => {
-    if (el.type === 'group') {
-      const arrChild = el.children
-      return arrChild.some(el => {
-        if (el.name === 'ref') {
-          return writeRefToFile(el, file)
-
-        }
-      })
-
-    } else {
-      if (el.name === 'ref') {
-        return writeRefToFile(el, file)
-      }
-    }
-  })
+  const flag = checkLayersArr(child, file)
+  console.log(flag)
   if (!flag) {
-    console.warn("\x1b[0m", "I don't see REF lay!")
+    console.warn("\x1b[0m", "I don't see REF layer!")
     console.log("")
   }
 })
