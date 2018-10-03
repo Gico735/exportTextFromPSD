@@ -7,6 +7,7 @@ const arrPsd = []
 const callDir = process.env.PWD
 let time = Date.now() / 1000
 let arrRefs = {}
+let haveAnyRef = false
 
 
 
@@ -21,7 +22,7 @@ const readDir = () => {
   })
   if (arrPsd.length === 0) {
     console.warn("\x1b[41m", "I don't see psd!")
-    console.log("")
+    console.log("\x1b[0m")
     process.exit(1)
   }
   return arrPsd
@@ -29,31 +30,35 @@ const readDir = () => {
 
 const chakeNameOfLay = (el, file) => {
   if (el.type === 'group') {
-    const arrChild = el.children
-    arrChild.some(el => {
-      if (el.name === 'REF') {
-        writeRefToFile(el, file)
-        return flag = 1
-      }
+    el.children.map(child => {
+      return chakeNameOfLay(child, file)
     })
   } else {
-    if (el.name === 'REF') {
-      writeRefToFile(el, file)
-      return flag = 1
+    if (el.name.toLowerCase() === 'ref') {
+      haveAnyRef = true
+      return writeRefToFile(el, file)
     }
   }
 }
 
+
 const writeRefToFile = (el, file) => {
   file = file.replace('.psd', '')
-  const strRef = el.text.value.split(/\r/g)
+  const text = el.text.value
+  const strRef = text.split(/[\r\u0003]/g)
+  if (text.search(/[А-Яа-я]\d\./gi) !== -1 ||
+    text.search(/[А-Яа-я]\d-\d/gi) !== -1 ||
+    text.search(/[А-Яа-я]\d,\d/gi) !== -1 ||
+    text.search(/[A-Za-z]\d[A-Za-z]/gi) !== -1) {
+    console.warn("\x1b[35m", "Look in PSD maybe you find sup/sub-string in ref")
+    console.log("\x1b[0m")
+  }
   strRef.map((el, i) => {
-    if (el === '' || el === ' ') {
+    if (el == '' || el == ' ') {
       strRef.splice(i, 1)
     }
   })
-  arrRefs[file] = strRef
-  return true;
+  return arrRefs[file] = strRef
 }
 
 
@@ -64,25 +69,14 @@ arrPsd.map((file) => {
   console.log(file)
   psd.parse()
   const child = psd.tree().export().children
-  let flag = child.some(el => {
-    if (el.type === 'group') {
-      const arrChild = el.children
-      return arrChild.some(el => {
-        if (el.name === 'REF') {
-          return writeRefToFile(el, file)
-
-        }
-      })
-
-    } else {
-      if (el.name === 'REF') {
-        return writeRefToFile(el, file)
-      }
-    }
+  child.some(layers => {
+    return chakeNameOfLay(layers, file)
   })
-  if (!flag) {
+  if (!haveAnyRef) {
     console.warn("\x1b[0m", "I don't see REF layer!")
     console.log("")
+  } else {
+    haveAnyRef = false
   }
 })
 const json = JSON.stringify(arrRefs)

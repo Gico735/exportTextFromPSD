@@ -3,6 +3,7 @@
 
 # production
 /testPSD
+/testPSDWithSup
 
 #modules
 /node_modules
