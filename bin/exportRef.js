@@ -45,18 +45,16 @@ const chakeNameOfLay = (el, file) => {
 const writeRefToFile = (el, file) => {
   file = file.replace('.psd', '')
   const text = el.text.value
-  const strRef = text.split(/[\r\u0003]/g)
+  let strRef = text.split(/[\r\u0003]/g)
   if (text.search(/[А-Яа-я]\d\./gi) !== -1 ||
     text.search(/[А-Яа-я]\d-\d/gi) !== -1 ||
     text.search(/[А-Яа-я]\d,\d/gi) !== -1 ||
     text.search(/[A-Za-z]\d[A-Za-z]/gi) !== -1) {
-    console.warn("\x1b[35m", "Look in PSD maybe you find sup/sub-string in ref")
+    console.warn("\x1b[35m", `Look in ${file}.PSD maybe you find sup/sub-string in ref`)
     console.log("\x1b[0m")
   }
-  strRef.map((el, i) => {
-    if (el == '' || el == ' ') {
-      strRef.splice(i, 1)
-    }
+  strRef = strRef.filter((el, i) => {
+    return !!el.trim()
   })
   return arrRefs[file] = strRef
 }
@@ -66,14 +64,13 @@ readDir()
 
 arrPsd.map((file) => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
-  console.log(file)
   psd.parse()
   const child = psd.tree().export().children
   child.some(layers => {
     return chakeNameOfLay(layers, file)
   })
   if (!haveAnyRef) {
-    console.warn("\x1b[0m", "I don't see REF layer!")
+    console.warn("\x1b[35m", `I don't see REF layer! in ${file}`)
     console.log("")
   } else {
     haveAnyRef = false

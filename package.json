@@ -1,6 +1,6 @@
 {
   "name": "exportref",
-  "version": "1.2.5",
+  "version": "1.2.8",
   "description": "соберет все источники для тебя",
   "main": "index.js",
   "preferGlobal": true,
@@ -26,5 +26,3 @@
   },
   "homepage": "https://github.com/Gico735/exportTextFromPSD#readme"
 }
-
-
