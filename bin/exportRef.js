@@ -12,10 +12,10 @@ let haveAnyRef = false
 const readDir = () => {
   console.log("Gotta Catch 'Em All")
   const arrDir = fs.readdirSync(callDir)
-  arrDir.map(el => {
-    const extName = path.extname(el)
+  arrDir.map(slide => {
+    const extName = path.extname(slide)
     if (extName === '.psd') {
-      arrPsd.push(el)
+      arrPsd.push(slide)
     }
   })
   if (arrPsd.length === 0) {
@@ -26,24 +26,24 @@ const readDir = () => {
   return arrPsd
 }
 
-const chakeNameOfLay = (el, file) => {
-  if (el.type === 'group') {
-    el.children.map(child => {
-      return chakeNameOfLay(child, file)
+const checkNameOfLay = (layer, file) => {
+  if (layer.type === 'group') {
+    layer.children.map(child => {
+      return checkNameOfLay(child, file)
     })
   } else {
-    if (el.name.toLowerCase() === 'ref') {
+    if (layer.name.toLowerCase() === 'ref') {
+      if (layer.text === undefined)
+        throw `ref - is a graphic layer in ${file}.psd`
       haveAnyRef = true
-      return writeRefToFile(el, file)
+      return writeRefToFile(layer, file)
     }
   }
 }
 
-const writeRefToFile = (el, file) => {
+const writeRefToFile = (layer, file) => {
   file = file.replace('.psd', '')
-  // console.log(el)
-
-  const text = el.text.value
+  const text = layer.text.value
   let strRef = text.split(/[\r\u0003]/g)
   if (
     text.search(/[А-Яа-я]\d\./gi) !== -1 ||
@@ -53,14 +53,13 @@ const writeRefToFile = (el, file) => {
   ) {
     console.warn(
       '\x1b[35m',
-      `Look in ${file}.PSD maybe you find sup/sub-string in ref`
+      `Look in ${file}.psd maybe you find sup/sub-string in ref`
     )
     console.log('\x1b[0m')
   }
-  strRef = strRef.filter((el, i) => {
-    return !!el.trim()
-  })
-  return (arrRefs[file] = strRef)
+  strRef = strRef.filter(el => !!el.trim())
+  if (arrRefs[file] === undefined) return (arrRefs[file] = strRef)
+  else throw `dublicate reference ${file}.psd`
 }
 
 readDir()
@@ -68,17 +67,14 @@ readDir()
 arrPsd.map(file => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
   psd.parse()
-  console.log(file)
   const child = psd.tree().export().children
   child.some(layers => {
-    return chakeNameOfLay(layers, file)
+    return checkNameOfLay(layers, file)
   })
   if (!haveAnyRef) {
     console.warn('\x1b[35m', `I don't see REF layer! in ${file}`)
     console.log('')
-  } else {
-    haveAnyRef = false
-  }
+  } else haveAnyRef = false
 })
 const json = JSON.stringify(arrRefs)
 
