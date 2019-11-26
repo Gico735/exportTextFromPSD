@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node bin/exportRef.js",
+    "start": "node bin/exportRefNew.js",
     "jup": "node bin/exportJuperio.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
