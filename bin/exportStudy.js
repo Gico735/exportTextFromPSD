@@ -54,15 +54,10 @@ const writeStudyToFile = (el, file) => {
     text.search(/[А-Яа-я]\d,\d/gi) !== -1 ||
     text.search(/[A-Za-z]\d[A-Za-z]/gi) !== -1
   ) {
-    console.warn(
-      '\x1b[35m',
-      `Look in ${file}.PSD maybe you find sup/sub-string in Study`
-    )
+    console.warn('\x1b[35m', `Look in ${file}.PSD maybe you find sup/sub-string in Study`)
     console.log('\x1b[0m')
   }
-  strStudy = strStudy.filter((el, i) => {
-    return !!el.trim()
-  })
+  strStudy = strStudy.filter((el, i) => !!el.trim())
   let study = ''
   study = study.concat('<p>', strStudy.join('<br><br>'), '</p>')
   return (arrStudys[file] = study)
@@ -74,18 +69,13 @@ arrPsd.map(file => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
   psd.parse()
   const child = psd.tree().export().children
-  child.some(layers => {
-    return chakeNameOfLay(layers, file)
-  })
+  child.some(layers => chakeNameOfLay(layers, file))
   if (!haveAnyStudy) {
     console.warn('\x1b[35m', `I don't see Study layer! in ${file}`)
     console.log('')
-  } else {
-    haveAnyStudy = false
-  }
+  } else haveAnyStudy = false
 })
-const json = JSON.stringify(arrStudys)
 
-fs.writeFileSync(`${callDir}/study.json`, json)
+fs.writeFileSync(`${callDir}/study.json`, JSON.stringify(arrStudys))
 time = Date.now() / 1000 - time
 console.log('Время выполнения = ', time.toFixed(2))

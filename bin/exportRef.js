@@ -37,7 +37,8 @@ const checkNameOfLay = (layer, file) => {
 const writeRefToFile = (layer, file) => {
   file = file.replace('.psd', '')
   const text = layer.text.value
-  let strRef = text.split(/[\r\u0003]/g)
+  let strRef = text.replace(/\u0003/g, '</br>')
+  strRef = strRef.split(/\r/g)
   if (
     text.search(/[А-Яа-я]\d\./gi) !== -1 ||
     text.search(/[А-Яа-я]\d-\d/gi) !== -1 ||
