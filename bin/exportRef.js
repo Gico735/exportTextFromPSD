@@ -12,12 +12,7 @@ let haveAnyRef = false
 const readDir = () => {
   console.log("Gotta Catch 'Em All")
   const arrDir = fs.readdirSync(callDir)
-  arrDir.map(slide => {
-    const extName = path.extname(slide)
-    if (extName === '.psd') {
-      arrPsd.push(slide)
-    }
-  })
+  arrDir.map(slide => path.extname(slide) === '.psd' && arrPsd.push(slide))
   if (arrPsd.length === 0) {
     console.warn('\x1b[41m', "I don't see psd!")
     console.log('\x1b[0m')
@@ -27,14 +22,12 @@ const readDir = () => {
 }
 
 const checkNameOfLay = (layer, file) => {
-  if (layer.type === 'group') {
-    layer.children.map(child => {
-      return checkNameOfLay(child, file)
-    })
-  } else {
+  if (layer.type === 'group') return layer.children.forEach(child => checkNameOfLay(child, file))
+  else {
+    //if have layer name="noref", it's mean noref in PSD
+    if (layer.name.toLowerCase() === 'noref') return false
     if (layer.name.toLowerCase() === 'ref') {
-      if (layer.text === undefined)
-        throw `ref - is a graphic layer in ${file}.psd`
+      if (layer.text === undefined) throw `ref - is a graphic layer in ${file}.psd`
       haveAnyRef = true
       return writeRefToFile(layer, file)
     }
@@ -51,10 +44,7 @@ const writeRefToFile = (layer, file) => {
     text.search(/[А-Яа-я]\d,\d/gi) !== -1 ||
     text.search(/[A-Za-z]\d[A-Za-z]/gi) !== -1
   ) {
-    console.warn(
-      '\x1b[35m',
-      `Look in ${file}.psd maybe you find sup/sub-string in ref`
-    )
+    console.warn('\x1b[35m', `Look in ${file}.psd maybe you find sup/sub-string in ref`)
     console.log('\x1b[0m')
   }
   strRef = strRef.filter(el => !!el.trim())
@@ -68,16 +58,11 @@ arrPsd.map(file => {
   const psd = PSD.fromFile(`${callDir}/${file}`)
   psd.parse()
   const child = psd.tree().export().children
-  child.some(layers => {
-    return checkNameOfLay(layers, file)
-  })
-  if (!haveAnyRef) {
-    console.warn('\x1b[35m', `I don't see REF layer! in ${file}`)
-    console.log('')
-  } else haveAnyRef = false
+  child.some(layers => checkNameOfLay(layers, file))
+  if (!haveAnyRef) console.warn('\x1b[35m', `I don't see REF layer! in ${file} \n`)
+  else haveAnyRef = false
 })
-const json = JSON.stringify(arrRefs)
 
-fs.writeFileSync(`${callDir}/refs.json`, json)
+fs.writeFileSync(`${callDir}/refs.json`, JSON.stringify(arrRefs))
 time = Date.now() / 1000 - time
 console.log('Время выполнения = ', time.toFixed(2))

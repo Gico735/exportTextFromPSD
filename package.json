@@ -14,6 +14,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node bin/exportRef.js",
+    "jup": "node bin/exportJuperio.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
