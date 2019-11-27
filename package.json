@@ -1,21 +1,22 @@
 {
   "name": "exportref",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "соберет все источники для тебя",
   "main": "index.js",
   "preferGlobal": true,
   "bin": {
     "exportref": "bin/exportRef.js",
-    "exportstudy": "bin/exportStudy.js"
+    "exportstudy": "bin/exportStudy.js",
+    "exportjup": "bin/exportJuperio.js"
   },
   "dependencies": {
     "psd": "^3.2.0"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node bin/exportRefNew.js",
+    "start": "node bin/exportRef.js",
     "jup": "node bin/exportJuperio.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "stu": "node bin/exportStudy.js"
   },
   "repository": {
     "type": "git",

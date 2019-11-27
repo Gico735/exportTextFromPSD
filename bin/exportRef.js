@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const main = require('./utils/utils')
+const main = require('./exportFronPSD/exportFronPSD')
 
 const checkSubStr = (text, file) => {
   if (
@@ -14,15 +14,13 @@ const checkSubStr = (text, file) => {
 }
 
 const checkValidLayer = (layer, file) => {
-  //if have layer name="noref", it's mean noref in PSD
-  if (layer.name.toLowerCase() === 'noref') return false
   if (layer.name.toLowerCase() === 'ref') {
     if (layer.text === undefined) throw `ref - is a graphic layer in ${file}.psd`
     return true
   }
 }
 
-const writeRefToFile = (layer, file) => {
+const getRefToWrite = (layer, file) => {
   const text = layer.text.value
   checkSubStr(text, file)
   let strRef = text.replace(/\u0003/g, '</br>')
@@ -31,4 +29,4 @@ const writeRefToFile = (layer, file) => {
   return strRef
 }
 
-main('ref', checkValidLayer, writeRefToFile)
+main(checkValidLayer, getRefToWrite, 'ref')

@@ -22,13 +22,15 @@ const getAllPSDFromCallDir = callDir => {
  * @param {Function} saveFunc function to save res if layer Valid, must return Object with:{filename:res}
  */
 function checkNameLayerAndSave(layer, file, checkFunc, saveFunc) {
+  if (layer.name.toLowerCase() === 'noref') return false
+  const isValidLayer = checkFunc(layer)
+  if (isValidLayer) return saveFunc(layer, file)
   if (layer.type === 'group') {
     const arr = layer.children.map(child => checkNameLayerAndSave(child, file, checkFunc, saveFunc))
     return toFlat(arr).filter(el => el)
   }
-  const isValidLayer = checkFunc(layer)
-  if (isValidLayer) return saveFunc(layer, file)
-  else return []
+  //if layer not valid and is not a group
+  return []
 }
 
 const timer = {
@@ -41,7 +43,7 @@ const timer = {
  * @param {Function} checkFunc function to check layer of valid, must return Boolean
  * @param {Function} saveFunc function to save res if layer Valid, must return Object with:{filename:res}
  */
-function main(whatNeed = 'ref', checkFunc, saveFunc) {
+function main(checkFunc, saveFunc, whatNeed = 'ref') {
   timer.start()
   const callDir = process.env.PWD
   const psdArr = getAllPSDFromCallDir(callDir)
@@ -53,6 +55,8 @@ function main(whatNeed = 'ref', checkFunc, saveFunc) {
     file = file.replace('.psd', '')
     for (const layer of children) {
       let ref = checkNameLayerAndSave(layer, file, checkFunc, saveFunc)
+      // if some layer has name "noref",then go to next file
+      if (typeof ref === 'boolean' && ref === false) return
       if (ref.length !== 0) {
         if (refsObj[file]) throw `dublicate ${whatNeed} in ${file}`
         else refsObj = { ...refsObj, [file]: ref }
