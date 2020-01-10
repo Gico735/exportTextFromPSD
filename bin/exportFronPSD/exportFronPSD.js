@@ -23,7 +23,7 @@ const getAllPSDFromCallDir = callDir => {
  */
 function checkNameLayerAndSave(layer, file, checkFunc, saveFunc) {
   if (layer.name.toLowerCase() === 'noref') return false
-  const isValidLayer = checkFunc(layer)
+  const isValidLayer = checkFunc(layer, file)
   if (isValidLayer) return saveFunc(layer, file)
   if (layer.type === 'group') {
     const arr = layer.children.map(child => checkNameLayerAndSave(child, file, checkFunc, saveFunc))
