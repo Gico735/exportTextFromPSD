@@ -21,8 +21,8 @@ const getAllPSDFromCallDir = callDir => {
  * @param {Function} checkFunc function to check layer of valid, must return Boolean
  * @param {Function} saveFunc function to save res if layer Valid, must return Object with:{filename:res}
  */
-function checkNameLayerAndSave(layer, file, checkFunc, saveFunc) {
-  if (layer.name.toLowerCase() === 'noref') return false
+function checkNameLayerAndSave(layer, file, checkFunc, saveFunc, whatNeed) {
+  if (whatNeed === 'ref' && layer.name.toLowerCase() === 'noref') return false
   const isValidLayer = checkFunc(layer, file)
   if (isValidLayer) return saveFunc(layer, file)
   if (layer.type === 'group') {
@@ -54,7 +54,7 @@ function main(checkFunc, saveFunc, whatNeed = 'ref') {
     const children = psd.tree().export().children
     file = file.replace('.psd', '')
     for (const layer of children) {
-      let ref = checkNameLayerAndSave(layer, file, checkFunc, saveFunc)
+      let ref = checkNameLayerAndSave(layer, file, checkFunc, saveFunc, whatNeed)
       // if some layer has name "noref",then go to next file
       if (typeof ref === 'boolean' && ref === false) return
       if (ref.length !== 0) {
