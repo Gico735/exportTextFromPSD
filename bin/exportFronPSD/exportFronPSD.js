@@ -62,8 +62,10 @@ function main(checkFunc, saveFunc, whatNeed = 'ref') {
         else refsObj = { ...refsObj, [file]: ref }
       }
     }
-    if (!Object.keys(refsObj))
-      console.warn('\x1b[35m', `I don't see ${whatNeed} layer! in ${file}\n`) || console.log('\x1b[0m')
+    if (!Object.keys(refsObj).length) {
+      console.warn('\x1b[35m', `I don't see ${whatNeed} layer! in ${file}\n`)
+      console.log('\x1b[0m')
+    }
   })
   fs.writeFileSync(`${callDir}/${whatNeed}.json`, JSON.stringify(refsObj))
   return console.log('Время выполнения = ', timer.end())
