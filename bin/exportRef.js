@@ -16,7 +16,7 @@ const checkSubStr = (text, file) => {
 const checkValidLayer = (layer, file) => {
   if (layer.name.toLowerCase().trim() === 'ref') {
     if (layer.text === undefined) {
-      console.warn('\x1b[35m', `ref - is a graphic layer in ${file}.psd`)
+      console.warn('\x1b[41m', `ref - это графический слой, а не текст в ${file}.psd`)
       console.log('\x1b[0m')
       return false
     }

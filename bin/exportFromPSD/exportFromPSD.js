@@ -59,7 +59,7 @@ function main(checkFunc, saveFunc, whatNeed = 'ref') {
       if (typeof ref === 'boolean' && ref === false) return
       if (ref.length !== 0) {
         if (refsObj[file]) {
-          console.warn('\x1b[35m', `dublicate ${whatNeed} in ${file}`)
+          console.warn('\x1b[41m', `dublicate ${whatNeed} in ${file}`)
           console.log('\x1b[0m')
           return false
         } else refsObj = { ...refsObj, [file]: ref }
