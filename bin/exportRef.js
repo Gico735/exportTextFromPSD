@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const main = require('./exportFronPSD/exportFronPSD')
+const main = require('./exportFromPSD/exportFromPSD')
 
 const checkSubStr = (text, file) => {
   if (
@@ -15,7 +15,11 @@ const checkSubStr = (text, file) => {
 
 const checkValidLayer = (layer, file) => {
   if (layer.name.toLowerCase().trim() === 'ref') {
-    if (layer.text === undefined) throw `ref - is a graphic layer in ${file}.psd`
+    if (layer.text === undefined) {
+      console.warn('\x1b[35m', `ref - is a graphic layer in ${file}.psd`)
+      console.log('\x1b[0m')
+      return false
+    }
     return true
   }
 }
@@ -25,7 +29,7 @@ const getRefToWrite = (layer, file) => {
   checkSubStr(text, file)
   let strRef = text.replace(/\u0003/g, '</br>')
   strRef = strRef.split(/\r/g)
-  strRef = strRef.filter(el => !!el.trim())
+  strRef = strRef.filter((el) => !!el.trim())
   return strRef
 }
 

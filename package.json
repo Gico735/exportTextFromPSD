@@ -1,6 +1,6 @@
 {
   "name": "exportref",
-  "version": "2.0.4",
+  "version": "2.1.4",
   "description": "соберет все источники для тебя",
   "main": "index.js",
   "preferGlobal": true,
@@ -10,6 +10,7 @@
     "exportjup": "bin/exportJuperio.js"
   },
   "dependencies": {
+    "coffee-script": "^1.12.7",
     "psd": "^3.2.0"
   },
   "devDependencies": {},
