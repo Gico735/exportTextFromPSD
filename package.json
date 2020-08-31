@@ -1,6 +1,6 @@
 {
   "name": "exportref",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "соберет все источники для тебя",
   "main": "index.js",
   "preferGlobal": true,
